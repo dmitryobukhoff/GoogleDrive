@@ -1,0 +1,31 @@
+version: '3.8'
+services:
+  google-drive-auth-service:
+    build: ./auth-service
+    image: google-drive-auth-service
+    container_name: google-drive-auth-service-container
+    ports:
+      - "8091:8091"
+    depends_on:
+      - google-drive-postgres
+      - google-driver-redis
+  google-drive-postgres:
+    image: postgres:15-alpine
+    container_name: google-drive-postgres-container
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data/
+    restart: unless-stopped
+    tty: true
+    stdin_open: true
+  google-driver-redis:
+      image: redis
+      container_name: google-drive-redis-container
+      ports:
+        - "6379:6379"
+
