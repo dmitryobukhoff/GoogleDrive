@@ -1,0 +1,36 @@
+server:
+  port: 8082
+  forward-headers-strategy: framework
+spring:
+    application:
+      name: api-gateway
+    cloud:
+      gateway:
+        limiter:
+          requestPerMinute: 30
+        routes:
+          - id: auth-service-route-authenticate
+            uri: http://localhost:8081/api/v1/auth/authenticate
+            predicates:
+              - Method=POST
+              - Path=/authenticate
+            filters:
+              - RewritePath=/authenticate, /api/v1/auth/authenticate
+          - id: auth-service-route-register
+            uri: http://localhost:8081/api/v1/auth/register
+            predicates:
+              - Path=/register
+              - Method=POST
+            filters:
+              - RewritePath=/register,/api/v1/auth/register
+
+
+    data:
+      redis:
+        port: 6378
+        host: localhost
+
+logging:
+  level:
+    org.springframework.cloud.gateway: debug
+    reactor.netty: debug
