@@ -1,19 +1,31 @@
 version: '3.8'
 services:
+  google-drive-gateway-service:
+    build: ./api-gateway
+    image: google-drive-gateway-service
+    environment:
+      - "SPRING_PROFILES_ACTIVE=prod"
+    container_name: google-drive-gateway-service
+    ports:
+      - "8082:8082"
+    depends_on:
+      - google-drive-gateway-redis
   google-drive-auth-service:
     build: ./auth-service
     image: google-drive-auth-service
-    container_name: google-drive-auth-service-container
+    environment:
+      - "SPRING_PROFILES_ACTIVE=prod"
+    container_name: google-drive-auth-service
     ports:
-      - "8091:8091"
+      - "8081:8081"
     depends_on:
-      - google-drive-postgres
-      - google-driver-redis
-  google-drive-postgres:
+      - google-drive-auth-postgres
+      - google-drive-auth-redis
+  google-drive-auth-postgres:
     image: postgres:15-alpine
-    container_name: google-drive-postgres-container
+    container_name: google-drive-auth-postgres
     ports:
-      - "5433:5432"
+      - "8083:5432"
     environment:
       POSTGRES_DB: postgres
       POSTGRES_USER: postgres
@@ -21,11 +33,22 @@ services:
     volumes:
       - ./pgdata:/var/lib/postgresql/data/
     restart: unless-stopped
-    tty: true
-    stdin_open: true
-  google-driver-redis:
+  google-drive-auth-redis:
       image: redis
-      container_name: google-drive-redis-container
+      container_name: google-drive-auth-redis
       ports:
-        - "6379:6379"
-
+        - "8084:6379"
+      networks:
+        - redis-network
+  google-drive-gateway-redis:
+    image: redis
+    container_name: google-drive-gateway-redis
+    ports:
+      - "8085:6379"
+    networks:
+      - redis-network
+networks:
+  redis-network:
+    driver: bridge
+volumes:
+  pgdata:
