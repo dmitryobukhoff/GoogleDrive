@@ -1,0 +1,25 @@
+spring:
+    application:
+        name: drive-service
+    datasource:
+        url: jdbc:postgresql://localhost:5432/google-drive
+        username: postgres
+        password: 1
+        driver-class-name: org.postgresql.Driver
+    jpa:
+        hibernate:
+            ddl-auto: create-drop
+        show-sql: false
+        properties:
+            hibernate:
+                format_sql: true
+        open-in-view: false
+
+storage:
+    minio:
+        credentials:
+            user: admin
+            password: password
+        endpoint: http://localhost:9000
+server:
+    port: 8086

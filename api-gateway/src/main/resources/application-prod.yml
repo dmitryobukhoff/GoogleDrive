@@ -1,33 +1,33 @@
 server:
-  port: 8081
+  port: 8082
+  forward-headers-strategy: framework
 spring:
-  datasource:
-    url: jdbc:postgresql://google-drive-auth-postgres:5432/postgres
-    username: postgres
-    password: 1
-    driver-class-name: org.postgresql.Driver
   application:
-    name: auth-service
+    name: api-gateway
+  cloud:
+    gateway:
+      limiter:
+        requestPerMinute: 30
+      routes:
+        - id: auth-service-route-authenticate
+          uri: http://google-drive-auth-service:8081/api/v1/auth/authenticate
+          predicates:
+            - Method=POST
+            - Path=/authenticate
+          filters:
+            - RewritePath=/authenticate, /api/v1/auth/authenticate
+        - id: auth-service-route-register
+          uri: http://google-drive-auth-service:8081/api/v1/auth/register
+          predicates:
+            - Path=/register
+            - Method=POST
+          filters:
+            - RewritePath=/register,/api/v1/auth/register
   data:
     redis:
-      host: google-drive-auth-redis
       port: 6379
-  jpa:
-    hibernate:
-      ddl-auto: create
-    show-sql: false
-    properties:
-      hibernate:
-        format_sql: true
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-    open-in-view: false
-
-security:
-  jwt:
-    secret-key: o9354rn9mm94kmd93d903kj209kksdfkmlsdfkmsdf9341924124
-    expiration-time: 600000
-
+      host: google-drive-gateway-redis
 logging:
   level:
-    org.springframework.jdbc.datasource: DEBUG
-    org.springframework.jdbc.core: DEBUG
+    org.springframework.cloud.gateway: debug
+    reactor.netty: debug

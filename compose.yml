@@ -34,12 +34,12 @@ services:
       - ./pgdata:/var/lib/postgresql/data/
     restart: unless-stopped
   google-drive-auth-redis:
-      image: redis
-      container_name: google-drive-auth-redis
-      ports:
-        - "8084:6379"
-      networks:
-        - redis-network
+    image: redis
+    container_name: google-drive-auth-redis
+    ports:
+      - "8084:6379"
+    networks:
+      - redis-network
   google-drive-gateway-redis:
     image: redis
     container_name: google-drive-gateway-redis

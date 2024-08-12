@@ -14,12 +14,11 @@ spring:
             port: 6379
     jpa:
         hibernate:
-            ddl-auto: create
+            ddl-auto: update
         show-sql: false
         properties:
             hibernate:
                 format_sql: true
-                dialect: org.hibernate.dialect.PostgreSQLDialect
         open-in-view: false
 
 security:
