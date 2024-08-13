@@ -50,18 +50,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if(fastAuthService.contains(token) && authentication == null){
                 log.info("Token {} contains in cache", token);
                 userDetails = fastAuthService.get(token);
-                setInSecurityContext(userDetails, request);
                 log.info("Founded user with username '{}'", userDetails.getUsername());
             }else{
                 if(username != null && authentication == null){
                     userDetails = userDetailsService.loadUserByUsername(username);
                     log.info("Founded user with username '{}'", userDetails.getUsername());
                     if(jwtService.isTokenValid(token, userDetails)){
-                        setInSecurityContext(userDetails, request);
                         fastAuthService.save(token, userDetails);
-                        log.info("Request token added in security context. Token: {}", token);
                     }
                 }
+            }
+
+            if(userDetails != null){
+                setInSecurityContext(userDetails, request);
+                log.info("User '{}' set in security context", userDetails.getUsername());
             }
 
             filterChain.doFilter(request, response);

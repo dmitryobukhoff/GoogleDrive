@@ -29,7 +29,8 @@ public class RequestLimiterServiceImpl implements RequestLimiterService {
 
     @Override
     public boolean contains(String key) {
-        return limiterRepository.contains(key);
+        Boolean contains = limiterRepository.contains(key);
+        return contains != null && contains;
     }
 
     @Override

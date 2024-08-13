@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
-import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
+import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 
 @Configuration
@@ -21,7 +21,7 @@ public class RedisConfiguration {
     @Bean
     public RedisConnectionFactory redisConnectionFactory(){
         RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration(host, port);
-        JedisConnectionFactory connection = new JedisConnectionFactory(configuration);
+        LettuceConnectionFactory connection = new LettuceConnectionFactory(configuration);
         log.info("Connection with Redis created at host {}", host + port);
         return connection;
     }

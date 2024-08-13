@@ -8,6 +8,8 @@ spring:
     gateway:
       limiter:
         requestPerMinute: 30
+        leakRate: 60000
+        maxCapacity: 30
       routes:
         - id: auth-service-route-authenticate
           uri: http://google-drive-auth-service:8081/api/v1/auth/authenticate
@@ -22,7 +24,7 @@ spring:
             - Path=/register
             - Method=POST
           filters:
-            - RewritePath=/register,/api/v1/auth/register
+            - RewritePath=/register, /api/v1/auth/register
   data:
     redis:
       port: 6379

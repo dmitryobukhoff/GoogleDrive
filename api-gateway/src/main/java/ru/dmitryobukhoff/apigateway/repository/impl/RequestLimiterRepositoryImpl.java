@@ -1,6 +1,7 @@
 package ru.dmitryobukhoff.apigateway.repository.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 import ru.dmitryobukhoff.apigateway.repository.RequestLimiterRepository;
@@ -12,10 +13,11 @@ import java.time.Duration;
 public class RequestLimiterRepositoryImpl implements RequestLimiterRepository {
 
     private final RedisTemplate<String, Integer> template;
+    @Value("${spring.data.redis.expiration}")
     private final long expiration = 60000;
 
     @Override
-    public boolean contains(String key) {
+    public Boolean contains(String key) {
         return template.hasKey(key);
     }
 
@@ -26,8 +28,7 @@ public class RequestLimiterRepositoryImpl implements RequestLimiterRepository {
 
     @Override
     public void put(String key, Integer value) {
-        template.opsForValue().set(key, value);
-        template.expire(key, Duration.ofMillis(expiration));
+        template.opsForValue().set(key, value, Duration.ofMillis(expiration));
     }
 
 }
