@@ -1,3 +1,5 @@
+SELECT 'CREATE DATABASE google-drive' WHERE NOT EXISTS(SELECT FROM pg_database WHERE datname = 'google-drive');
+
 CREATE SCHEMA IF NOT EXISTS google_drive;
 
 DROP TABLE IF EXISTS google_drive.user_info CASCADE;

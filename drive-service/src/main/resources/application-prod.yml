@@ -1,0 +1,41 @@
+spring:
+  application:
+    name: drive-service
+  datasource:
+    url: jdbc:postgresql://google-drive-auth-postgres:5432/google-drive
+    username: postgres
+    password: 1
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+    open-in-view: false
+
+  liquibase:
+    enabled: true
+    change-log: classpath*:db/db.changelog-master.yml
+
+storage:
+  minio:
+    bucket: user-files
+    credentials:
+      user: admin
+      password: password
+    endpoint: http://google-drive-file-minio:9000
+
+security:
+  jwt:
+    public-key: |
+      MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwuHVVIwlNmHtCaktGSeN
+      /SaghtbqE4/bUdmRaiP2Lml5euAfTsxWDGh3IxpSAtsW06NAr799V8FVvl9lPv2N
+      RZyULiqL19TnLIMvjj+Uesa+RTFB6xppllqF2miCWYhY40yVvy5KJ7Z3M5s9TZio
+      DKQfLPt9uW6JM0Y1ED160HbquCpX/TYRheml7dZkadyI40kLo0uwTQFRNMlDrTWf
+      g1XpGcSuk/WOIJMR7V3Ov4j23kkkHBtDb8kwehRn/ogc+mHuQRIPCZ24HsnqVMla
+      TF3jTlWliaabr30p9Tqua4ngB5iNKDhs85HCYfziRvtsFRqq7JrY0tFOh2kEJnCh
+      KwIDAQAB
+server:
+  port: 8086

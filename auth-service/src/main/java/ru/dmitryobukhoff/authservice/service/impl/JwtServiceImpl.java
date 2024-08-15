@@ -4,13 +4,16 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import ru.dmitryobukhoff.authservice.service.JwtService;
 
 import java.security.Key;
+import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,6 +26,9 @@ public class JwtServiceImpl implements JwtService {
 
     @Value("${security.jwt.expiration-time}")
     private long expirationTime;
+
+    @Value("${security.jwt.private-key}")
+    private String privateKey;
 
     @Override
     public String extractUsername(String token) {
@@ -44,29 +50,38 @@ public class JwtServiceImpl implements JwtService {
         return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
     }
 
-    private Key getSignInKey(){
-        byte[] bytes = Decoders.BASE64.decode(secretKey);
-        return Keys.hmacShaKeyFor(bytes);
+    private Key getSignInKey() throws NoSuchAlgorithmException, InvalidKeySpecException {
+        byte[] bytes = Decoders.BASE64.decode(replace(privateKey));
+        PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(bytes);
+        return KeyFactory.getInstance("RSA").generatePrivate(keySpec);
     }
 
     private Claims extractAllClaims(String token){
-        return Jwts.parserBuilder()
-                .setSigningKey(getSignInKey())
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
+        try {
+            return Jwts.parserBuilder()
+                    .setSigningKey(getSignInKey())
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+            throw new RuntimeException(e);
+        }
 
     }
 
-    private String buildToken(Map<String, Object> extraClaims, UserDetails userDetails, long expirationTime){
-        return Jwts
-                .builder()
-                .setClaims(extraClaims)
-                .setSubject(userDetails.getUsername())
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
-                .signWith(getSignInKey(), SignatureAlgorithm.HS256)
-                .compact();
+    private String buildToken(Map<String, Object> extraClaims, UserDetails userDetails, long expirationTime) {
+        try {
+            return Jwts
+                    .builder()
+                    .setClaims(extraClaims)
+                    .setSubject(userDetails.getUsername())
+                    .setIssuedAt(new Date(System.currentTimeMillis()))
+                    .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
+                    .signWith(getSignInKey(), SignatureAlgorithm.RS256)
+                    .compact();
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private long getExpirationTime(){
@@ -79,5 +94,9 @@ public class JwtServiceImpl implements JwtService {
 
     private boolean isTokenExpired(String token){
         return extractExpiration(token).before(new Date());
+    }
+
+    private String replace(String privateKey) {
+        return privateKey.replaceAll("\\s+", "");
     }
 }

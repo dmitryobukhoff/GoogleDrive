@@ -1,4 +1,9 @@
 version: '3.8'
+
+networks:
+  google-drive-network:
+    driver: bridge
+
 services:
   google-drive-gateway-service:
     build: ./api-gateway
@@ -8,6 +13,8 @@ services:
     container_name: google-drive-gateway-service
     ports:
       - "8082:8082"
+    networks:
+      - google-drive-network
     depends_on:
       - google-drive-gateway-redis
   google-drive-auth-service:
@@ -18,6 +25,8 @@ services:
     container_name: google-drive-auth-service
     ports:
       - "8081:8081"
+    networks:
+      - google-drive-network
     depends_on:
       - google-drive-auth-postgres
       - google-drive-auth-redis
@@ -26,6 +35,8 @@ services:
     container_name: google-drive-auth-postgres
     ports:
       - "8083:5432"
+    networks:
+      - google-drive-network
     environment:
       POSTGRES_DB: postgres
       POSTGRES_USER: postgres
@@ -39,16 +50,39 @@ services:
     ports:
       - "8084:6379"
     networks:
-      - redis-network
+      - google-drive-network
   google-drive-gateway-redis:
     image: redis
     container_name: google-drive-gateway-redis
     ports:
       - "8085:6379"
     networks:
-      - redis-network
-networks:
-  redis-network:
-    driver: bridge
+      - google-drive-network
+  google-drive-file-minio:
+    image: bitnami/minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    container_name: google-drive-file-minio
+    environment:
+      - MINIO_ROOT_USER=minio-user
+      - MINIO_ROOT_PASSWORD=minio-password
+    networks:
+      - google-drive-network
+  google-drive-file-service:
+    build: ./drive-service
+    image: google-drive-file-service
+    container_name: google-drive-file-service
+    ports:
+      - "8086:8086"
+    environment:
+      - MINIO_SERVER_ACCESS_KEY=admin
+      - MINIO_SERVER_SECRET_KEY=password
+      - "SPRING_PROFILES_ACTIVE=prod"
+    depends_on:
+      - google-drive-file-minio
+      - google-drive-auth-postgres
+    networks:
+      - google-drive-network
 volumes:
   pgdata:

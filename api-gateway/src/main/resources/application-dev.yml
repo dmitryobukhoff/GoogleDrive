@@ -15,16 +15,23 @@ spring:
             uri: http://localhost:8081/api/v1/auth/authenticate
             predicates:
               - Method=POST
-              - Path=/authenticate
+              - Path=/auth/authenticate
             filters:
-              - RewritePath=/authenticate, /api/v1/auth/authenticate
+              - RewritePath=/auth/authenticate, /api/v1/auth/authenticate
           - id: auth-service-route-register
             uri: http://localhost:8081/api/v1/auth/register
             predicates:
-              - Path=/register
+              - Path=/auth/register
               - Method=POST
             filters:
-              - RewritePath=/register,/api/v1/auth/register
+              - RewritePath=/auth/register,/api/v1/auth/register
+          - id: drive-service-route
+            uri: http://localhost:8086
+            predicates:
+              - Method=POST, DELETE, PATCH, GET
+              - Path=/drive/**
+            filters:
+              - RewritePath=/drive/(?<segment>.*), /api/v1/drive/$\{segment}
 
 
     data:

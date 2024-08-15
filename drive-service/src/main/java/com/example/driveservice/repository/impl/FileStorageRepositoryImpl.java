@@ -65,7 +65,7 @@ public class FileStorageRepositoryImpl implements FileStorageRepository {
             );
             return true;
         }catch (Exception exception){
-            return false;
+            throw new MinIOException(exception.getMessage());
         }
     }
 

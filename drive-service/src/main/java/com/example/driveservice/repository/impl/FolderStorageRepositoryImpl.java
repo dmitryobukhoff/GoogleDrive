@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import java.io.ByteArrayInputStream;
-import java.util.Iterator;
 
 
 @Repository
@@ -39,7 +38,7 @@ public class FolderStorageRepositoryImpl implements FolderStorageRepository {
     @Override
     public void delete(String path) {
         try {
-            Iterable<Result<Item>> objects = getObjectsRecursive(path);
+            Iterable<Result<Item>> objects = getObjects(path, true);
             for(Result<Item> object : objects){
                 client.removeObject(
                         RemoveObjectArgs.builder()
@@ -61,9 +60,14 @@ public class FolderStorageRepositoryImpl implements FolderStorageRepository {
         delete(oldPath);
     }
 
+    @Override
+    public void getAll(String path) {
+
+    }
+
     private void copy(String oldPath, String newPath){
         try{
-            Iterable<Result<Item>> objects = getObjectsRecursive(oldPath);
+            Iterable<Result<Item>> objects = getObjects(oldPath, true);
             for (Result<Item> object : objects) {
                 Item item = object.get();
                 String oldPrefix = item.objectName();
@@ -87,12 +91,12 @@ public class FolderStorageRepositoryImpl implements FolderStorageRepository {
 
     }
 
-    private Iterable<Result<Item>> getObjectsRecursive(String path){
+    private Iterable<Result<Item>> getObjects(String path, boolean recursive){
         return client.listObjects(
                 ListObjectsArgs.builder()
                         .bucket(bucket)
                         .prefix(path)
-                        .recursive(true)
+                        .recursive(recursive)
                         .build()
         );
     }

@@ -17,19 +17,25 @@ public class FolderController {
     private final FolderStorageService fileStorageService;
 
     @PostMapping(value = "/create")
-    public ResponseEntity<?> create(@RequestBody FolderLoadRequest request){
+    public ResponseEntity<?> create(@RequestBody FolderLoadRequest request,
+                                    @RequestAttribute("username") String username){
+        request.setEmail(username);
         fileStorageService.create(request);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @DeleteMapping(value = "/delete")
-    public ResponseEntity<?> delete(@RequestBody FolderDeleteRequest request){
+    public ResponseEntity<?> delete(@RequestBody FolderDeleteRequest request,
+                                    @RequestAttribute("username") String username){
+        request.setEmail(username);
         fileStorageService.delete(request);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PatchMapping(value = "/rename")
-    public ResponseEntity<?> rename(@RequestBody FolderRenameRequest request){
+    public ResponseEntity<?> rename(@RequestBody FolderRenameRequest request,
+                                    @RequestAttribute("username") String username){
+        request.setEmail(username);
         fileStorageService.rename(request);
         return new ResponseEntity<>(HttpStatus.OK);
     }

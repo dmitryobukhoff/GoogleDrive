@@ -20,7 +20,7 @@ public class FileController {
 
     @PostMapping(value = "/load")
     public ResponseEntity<?> load(@RequestParam("file") MultipartFile file,
-                                  @RequestParam("email") String email,
+                                  @RequestAttribute("username") String email,
                                   @RequestParam("path") String path){
         FileLoadRequest request = FileLoadRequest.builder()
                 .file(file)
@@ -32,13 +32,17 @@ public class FileController {
     }
 
     @DeleteMapping(value = "/delete")
-    public ResponseEntity<?> delete(@RequestBody FileDeleteRequest request){
+    public ResponseEntity<?> delete(@RequestBody FileDeleteRequest request,
+                                    @RequestAttribute("username") String username){
+        request.setEmail(username);
         fileService.delete(request);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PatchMapping(value = "/rename")
-    public ResponseEntity<?> rename(@RequestBody FileRenameRequest request){
+    public ResponseEntity<?> rename(@RequestBody FileRenameRequest request,
+                                    @RequestAttribute("username") String username){
+        request.setEmail(username);
         fileService.rename(request);
         return new ResponseEntity<>(HttpStatus.OK);
     }

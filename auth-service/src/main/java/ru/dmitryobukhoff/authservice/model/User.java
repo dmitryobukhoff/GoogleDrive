@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "user_info")
+@Table(name = "user_info", schema = "google_drive")
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder

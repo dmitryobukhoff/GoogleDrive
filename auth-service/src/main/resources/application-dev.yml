@@ -2,7 +2,7 @@ server:
     port: 8081
 spring:
     datasource:
-      url: jdbc:postgresql://localhost:5432/postgres
+      url: jdbc:postgresql://localhost:5432/google-drive
       username: postgres
       password: 1
       driver-class-name: org.postgresql.Driver
@@ -14,7 +14,7 @@ spring:
         port: 6379
     jpa:
       hibernate:
-        ddl-auto: create-drop
+        ddl-auto: none
       show-sql: false
       properties:
         hibernate:
@@ -25,3 +25,30 @@ security:
     jwt:
         secret-key: o9354rn9mm94kmd93d903kj209kksdfkmlsdfkmsdf9341924124
         expiration-time: 600000
+        private-key: |
+          MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDC4dVUjCU2Ye0J
+          qS0ZJ439JqCG1uoTj9tR2ZFqI/YuaXl64B9OzFYMaHcjGlIC2xbTo0Cvv31XwVW+
+          X2U+/Y1FnJQuKovX1Ocsgy+OP5R6xr5FMUHrGmmWWoXaaIJZiFjjTJW/Lkontncz
+          mz1NmKgMpB8s+325bokzRjUQPXrQduq4Klf9NhGF6aXt1mRp3IjjSQujS7BNAVE0
+          yUOtNZ+DVekZxK6T9Y4gkxHtXc6/iPbeSSQcG0NvyTB6FGf+iBz6Ye5BEg8Jnbge
+          yepUyVpMXeNOVaWJppuvfSn1Oq5rieAHmI0oOGzzkcJh/OJG+2wVGqrsmtjS0U6H
+          aQQmcKErAgMBAAECggEARIVpH9Ai6WsnEAWG0NhiiUcCnEaGiRhEshPAmERKs+js
+          CLMy7t7TxosYkKQZf92Ouh0limXW6XsV7djW3X4DJR230D+vadT272S03NwoFb85
+          eVSna8WeqHntpGyooFhbgJgV8uGQu0Phx6hmtpjdRYyTVZqbiw59eSTPVYV4YEFC
+          lhzJesr65qdy4a4LYDWxu4Qahxmvv+rZQJp8u73pdm2Q94uxPS2Ggt4dL2rMVoDH
+          h51LMTr/gwBEMFOOCkR+I50+8yxSxvp0McTMKOq9+KV7iHH91BAVjcnUfbCJhhlE
+          JPZ0JLwDvASIAIVGfBiPke6Y+J0tqYbjJJ73ks3f6QKBgQDfFYQBtOuFmXVE/C3n
+          b+JURYeXSCvEzrXNbpvyomXDxldDDm5E1l6oMGfXzzdZbyFhY89Z8b8D6xlekBbB
+          0XdRm7xTVT+lbDYXq1zHRyc2pJMkq605uAimdyAvueOwWnLbR7I3RUGzaI7kiH4D
+          Xfnd3E2RJc6wo5lbplK5t7qhJQKBgQDfow6Bez8BzR8YTrxaBcwZ33iee0YPoFm+
+          jOMqu8r3w6B6jHgONaHKA+SGR5yXDQBAptmGGhJLQAgSsvH9sy/JLg9fvxdknLaj
+          A8Y3Cu9O6YL/GC5juvn7xrqyC+mPVGUETXxb9iMlqXLfv69MNsuiCTpMdNyvYZhD
+          GLNpnq1wDwKBgQCIlGepk9bOiNGfVrXUCFANQDRvjqQdbmEoURvxRTQA1KIAUAl6
+          47Q4TMqG+jrs6nkJY05Dxxonj/yMRLNqHpBqympWqs64vLOxchzvdMSxU7kyrlj0
+          CZRiNnTiQ3D/O6EuV4rpA+HhsZYqnNZpwVOFXaevwfH1e3QdBIuJYM9GcQKBgDYf
+          q2IQ5uXTs+PZImKTJptYZ0PLx9/+SdoBFPWBr5SZJtyh5Ghj+H0AxiztZet0vQvo
+          lZqL8sN9grar0j85P6Zr3FKq18mE1/rJ7g3iOpqZjxeXzZpbZSbXKNXwZh1HKo+J
+          BUDoaAc0ZFXceVtzo4Lawt5AJizX7NbIQpucSJNnAoGBAKM9SpMU0RymjoctIvfa
+          BjKil5mpRcfeRlcWWyj14xxMe7xMD2F8jBwkUcy28E5Or8e8pUG4Xlb+TJcNsahc
+          EiOTGvk9BRp7NeQmw986VrK6m+6bSVPX5JfKdbYnp6jc0xyBX8m68/dkMp+8ScwF
+          oHbto61P7mLsqGbOporPMdHN
