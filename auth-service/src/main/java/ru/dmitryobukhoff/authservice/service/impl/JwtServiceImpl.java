@@ -45,9 +45,9 @@ public class JwtServiceImpl implements JwtService {
     }
 
     @Override
-    public boolean isTokenValid(String token, UserDetails userDetails) {
-        final String username = extractUsername(token);
-        return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
+    public boolean isTokenValid(Claims claims, UserDetails userDetails) {
+        final String username = claims.getSubject();
+        return (username.equals(userDetails.getUsername())) && !isTokenExpired(claims);
     }
 
     private Key getSignInKey() throws NoSuchAlgorithmException, InvalidKeySpecException {
@@ -56,7 +56,7 @@ public class JwtServiceImpl implements JwtService {
         return KeyFactory.getInstance("RSA").generatePrivate(keySpec);
     }
 
-    private Claims extractAllClaims(String token){
+    public Claims extractAllClaims(String token){
         try {
             return Jwts.parserBuilder()
                     .setSigningKey(getSignInKey())
@@ -92,8 +92,8 @@ public class JwtServiceImpl implements JwtService {
         return extractAllClaims(token).getExpiration();
     }
 
-    private boolean isTokenExpired(String token){
-        return extractExpiration(token).before(new Date());
+    private boolean isTokenExpired(Claims claims){
+        return claims.getExpiration().before(new Date());
     }
 
     private String replace(String privateKey) {

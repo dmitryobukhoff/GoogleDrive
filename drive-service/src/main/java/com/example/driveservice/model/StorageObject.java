@@ -1,6 +1,6 @@
 package com.example.driveservice.model;
 
-import com.example.driveservice.model.record.ObjectType;
+import com.example.driveservice.model.enums.ObjectType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

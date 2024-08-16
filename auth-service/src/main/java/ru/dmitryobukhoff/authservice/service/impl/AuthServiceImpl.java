@@ -6,6 +6,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StopWatch;
 import ru.dmitryobukhoff.authservice.model.User;
 import ru.dmitryobukhoff.authservice.model.dto.request.UserAuthRequest;
 import ru.dmitryobukhoff.authservice.model.dto.request.UserRegistrationRequest;
@@ -41,12 +42,11 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public AuthenticationResponse authenticate(UserAuthRequest request) {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.getEmail(), // principal - информация, идентифицирующая пользователя
-                        request.getPassword() // credentials - информация, предоставляемая пользователем для аутентификации
-                )
+        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                request.getEmail(), // principal - информация, идентифицирующая пользователя
+                request.getPassword() // credentials - информация, предоставляемая пользователем для аутентификации
         );
+        authenticationManager.authenticate(authToken);
         log.info("User '{}' saved in Security Context", request.getEmail());
         User user = userRepository.findUserByEmail(request.getEmail())
                 .orElseThrow();

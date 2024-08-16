@@ -1,14 +1,19 @@
 package com.example.driveservice.repository.impl;
 
 import com.example.driveservice.exception.MinIOException;
+import com.example.driveservice.model.dto.response.FolderContentResponse;
 import com.example.driveservice.repository.FolderStorageRepository;
 import io.minio.*;
 import io.minio.messages.Item;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.stereotype.Repository;
 
 import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Function;
 
 
 @Repository
@@ -16,6 +21,7 @@ import java.io.ByteArrayInputStream;
 public class FolderStorageRepositoryImpl implements FolderStorageRepository {
 
     private final MinioClient client;
+    private final Function<Item, FolderContentResponse> mapper;
 
     @Value("${storage.minio.bucket}")
     private String bucket;
@@ -61,8 +67,19 @@ public class FolderStorageRepositoryImpl implements FolderStorageRepository {
     }
 
     @Override
-    public void getAll(String path) {
-
+    public List<FolderContentResponse> getAll(String path) {
+        Iterable<Result<Item>> results = getObjects(path, false);
+        List<FolderContentResponse> responses = new ArrayList<>();
+        try {
+            for(Result<Item> result : results){
+                Item item = result.get();
+                if(!item.objectName().equals(path))
+                    responses.add(mapper.apply(item));
+            }
+            return responses;
+        }catch (Exception exception){
+            throw new DataAccessResourceFailureException(exception.getMessage());
+        }
     }
 
     private void copy(String oldPath, String newPath){
