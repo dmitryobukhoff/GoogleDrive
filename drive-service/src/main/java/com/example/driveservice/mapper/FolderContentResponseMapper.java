@@ -1,6 +1,7 @@
 package com.example.driveservice.mapper;
 
 import com.example.driveservice.model.dto.response.FolderContentResponse;
+import com.example.driveservice.util.PathUtil;
 import io.minio.messages.Item;;
 import org.springframework.stereotype.Component;
 
@@ -11,9 +12,9 @@ public class FolderContentResponseMapper implements Function<Item, FolderContent
 
     @Override
     public FolderContentResponse apply(Item itemResult) {
-        String path = getPath(itemResult.objectName());
-        String name = getName(path);
-        String extension = getExtension(itemResult.objectName());
+        String path = PathUtil.getPath(itemResult.objectName());
+        String name = PathUtil.getName(itemResult.objectName());
+        String extension = PathUtil.getExtension(itemResult.objectName());
         long size = itemResult.size();
         return FolderContentResponse.builder()
                 .path(path)
@@ -23,22 +24,5 @@ public class FolderContentResponseMapper implements Function<Item, FolderContent
                 .build();
     }
 
-    public static String getName(String path){
-        String[] route = path.split("/");
-        return route[route.length - 1];
-    }
 
-    private String getPath(String objectName){
-        return objectName.substring(objectName.indexOf("/"), objectName.length() - 1);
-    }
-
-    private String getExtension(String path){
-        if(isFolder(path)) return "FOLDER";
-        String[] route = path.split("\\.");
-        return route[route.length - 1];
-    }
-
-    private boolean isFolder(String path){
-        return path.charAt(path.length() - 1) == '/';
-    }
 }

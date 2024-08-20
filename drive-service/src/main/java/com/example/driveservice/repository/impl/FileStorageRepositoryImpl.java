@@ -4,7 +4,9 @@ import com.example.driveservice.exception.MinIOException;
 import com.example.driveservice.repository.FileStorageRepository;
 import io.minio.*;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.Get;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -70,13 +72,12 @@ public class FileStorageRepositoryImpl implements FileStorageRepository {
     }
 
     @Override
-    public void download(String path, String filename) {
+    public InputStream download(String path) {
         try{
-            client.downloadObject(
-                    DownloadObjectArgs.builder()
+            return client.getObject(
+                    GetObjectArgs.builder()
                             .bucket(bucket)
                             .object(path)
-                            .filename(filename)
                             .build()
             );
         }catch (Exception exception){

@@ -1,21 +1,25 @@
 package com.example.driveservice.service.impl;
 
+import com.example.driveservice.exception.DownloadFileException;
 import com.example.driveservice.mapper.FolderContentResponseMapper;
 import com.example.driveservice.model.dto.request.FileDeleteRequest;
 import com.example.driveservice.model.dto.request.FileDownloadRequest;
 import com.example.driveservice.model.dto.request.FileLoadRequest;
 import com.example.driveservice.model.dto.request.FileRenameRequest;
+import com.example.driveservice.model.dto.response.FileDownloadResponse;
 import com.example.driveservice.repository.FileStorageRepository;
 import com.example.driveservice.service.FileStorageService;
 import com.example.driveservice.service.UserService;
+import com.example.driveservice.util.PathUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.InputStream;
+import java.io.*;
 import java.util.UUID;
 
 @Service
@@ -36,6 +40,7 @@ public class FileStorageServiceImpl implements FileStorageService {
     }
 
     @Override
+    @CacheEvict(value = "file_cache", key = "#request.email + ':' + #request.path")
     public void delete(FileDeleteRequest request) {
         UUID id = userService.getIdByEmail(request.getEmail());
         String path = createPath(id, request.getPath());
@@ -53,12 +58,22 @@ public class FileStorageServiceImpl implements FileStorageService {
     }
 
     @Override
-    public void download(FileDownloadRequest request) {
+    @Cacheable(value = "file_cache", key = "#request.email + ':' + #request.path")
+    public FileDownloadResponse download(FileDownloadRequest request) {
         UUID id = userService.getIdByEmail(request.getEmail());
-        String drivePath = createPath(id, request.getDrivePath());
-        String localPath = request.getLocalPath() + "\\" + FolderContentResponseMapper.getName(drivePath);
-        fileStorageRepository.download(drivePath, localPath);
-        log.info("User: {} download file {} to local directory {}", request.getEmail(), drivePath, localPath);
+        String path = createPath(id, request.getPath());
+        try {
+            InputStream inputStream = fileStorageRepository.download(path);
+            log.info("User: {} download file {}", request.getEmail(), path);
+            String name = PathUtil.getName(path);
+            return FileDownloadResponse.builder()
+                    .name(name)
+                    .file(inputStream.readAllBytes())
+                    .build();
+        } catch (Exception exception) {
+            log.error("User: {} download file {} with error", request.getEmail(), path);
+            throw new DownloadFileException(exception.getMessage());
+        }
     }
 
     private String createPath(UUID userId, String path, String filename){
