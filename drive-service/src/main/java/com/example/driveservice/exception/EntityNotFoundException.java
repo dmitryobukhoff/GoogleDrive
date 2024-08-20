@@ -1,6 +1,6 @@
 package com.example.driveservice.exception;
 
-public class EntityNotFoundException extends RuntimeException{
+public class EntityNotFoundException extends CustomRuntimeException{
     public EntityNotFoundException(String message){
         super(message);
     }

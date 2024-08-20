@@ -40,6 +40,11 @@ spring:
         host: localhost
         expiration: 60000
 
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8087/eureka/
+
 logging:
   level:
     org.springframework.cloud.gateway: debug

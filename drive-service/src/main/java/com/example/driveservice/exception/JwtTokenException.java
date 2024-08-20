@@ -1,6 +1,6 @@
 package com.example.driveservice.exception;
 
-public class JwtTokenException extends RuntimeException{
+public class JwtTokenException extends CustomRuntimeException{
     public JwtTokenException(String message) {
         super(message);
     }

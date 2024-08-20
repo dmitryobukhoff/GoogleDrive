@@ -6,6 +6,7 @@ import com.example.driveservice.model.dto.request.FolderLoadRequest;
 import com.example.driveservice.model.dto.request.FolderRenameRequest;
 import com.example.driveservice.model.dto.response.FolderContentResponse;
 import com.example.driveservice.service.FolderStorageService;
+import com.example.driveservice.util.UserContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,34 +24,30 @@ public class FolderController {
     private final FolderStorageService fileStorageService;
 
     @PostMapping(value = "/create")
-    public ResponseEntity<?> create(@RequestBody FolderLoadRequest request,
-                                    @RequestAttribute("username") String username){
-        request.setEmail(username);
+    public ResponseEntity<?> create(@RequestBody FolderLoadRequest request){
+        request.setEmail(UserContext.getUsername());
         fileStorageService.create(request);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @DeleteMapping(value = "/delete")
-    public ResponseEntity<?> delete(@RequestBody FolderDeleteRequest request,
-                                    @RequestAttribute("username") String username){
-        request.setEmail(username);
+    public ResponseEntity<?> delete(@RequestBody FolderDeleteRequest request){
+        request.setEmail(UserContext.getUsername());
         fileStorageService.delete(request);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PatchMapping(value = "/rename")
-    public ResponseEntity<?> rename(@RequestBody FolderRenameRequest request,
-                                    @RequestAttribute("username") String username){
-        request.setEmail(username);
+    public ResponseEntity<?> rename(@RequestBody FolderRenameRequest request){
+        request.setEmail(UserContext.getUsername());
         fileStorageService.rename(request);
         return new ResponseEntity<>(HttpStatus.OK);
     }
     @GetMapping("/content")
-    public ResponseEntity<?> content(@RequestParam("path") String path,
-                             @RequestAttribute("username") String username){
+    public ResponseEntity<?> content(@RequestParam("path") String path){
         List<FolderContentResponse> contents = fileStorageService.getAll(FolderContentRequest.builder()
-                        .email(username)
                         .path(path)
+                        .email(UserContext.getUsername())
                 .build());
         return new ResponseEntity<>(Map.of("content", contents), HttpStatus.OK);
     }

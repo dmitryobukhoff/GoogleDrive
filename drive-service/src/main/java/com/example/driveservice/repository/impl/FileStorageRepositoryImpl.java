@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.InputStream;
+
 @Repository
 @RequiredArgsConstructor
 public class FileStorageRepositoryImpl implements FileStorageRepository {
@@ -49,8 +51,6 @@ public class FileStorageRepositoryImpl implements FileStorageRepository {
 
     @Override
     public void rename(String oldPath, String newPath){
-        System.out.println(oldPath + " " + newPath);
-        System.out.println(exist(oldPath));
         copy(oldPath, newPath);
         delete(oldPath);
     }
@@ -64,6 +64,21 @@ public class FileStorageRepositoryImpl implements FileStorageRepository {
                             .build()
             );
             return true;
+        }catch (Exception exception){
+            throw new MinIOException(exception.getMessage());
+        }
+    }
+
+    @Override
+    public void download(String path, String filename) {
+        try{
+            client.downloadObject(
+                    DownloadObjectArgs.builder()
+                            .bucket(bucket)
+                            .object(path)
+                            .filename(filename)
+                            .build()
+            );
         }catch (Exception exception){
             throw new MinIOException(exception.getMessage());
         }

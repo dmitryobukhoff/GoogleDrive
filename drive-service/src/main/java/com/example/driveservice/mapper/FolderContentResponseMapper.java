@@ -23,7 +23,7 @@ public class FolderContentResponseMapper implements Function<Item, FolderContent
                 .build();
     }
 
-    private String getName(String path){
+    public static String getName(String path){
         String[] route = path.split("/");
         return route[route.length - 1];
     }

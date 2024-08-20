@@ -27,6 +27,7 @@ storage:
             password: password
         endpoint: http://localhost:9000
 
+
 security:
     jwt:
         public-key: |
@@ -39,3 +40,8 @@ security:
             KwIDAQAB
 server:
     port: 8086
+
+eureka:
+    client:
+        service-url:
+          defaultZone: http://localhost:8087/eureka/

@@ -1,8 +1,12 @@
 package com.example.driveservice.exception;
 
-public class MinIOException extends RuntimeException{
+import com.example.driveservice.util.UserContext;
+
+public class MinIOException extends CustomRuntimeException{
 
     public MinIOException(String message){
         super(message);
     }
+
+
 }

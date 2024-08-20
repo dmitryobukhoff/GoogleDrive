@@ -19,15 +19,19 @@ public class StorageObject {
     private UUID id;
 
     @Column(name = "name")
+    @Basic(optional = false)
     private String name;
 
     @Column(name = "path")
+    @Basic(optional = false)
     private String path;
 
     @Column(name = "extension")
+    @Basic(optional = false)
     private String extension;
 
     @Column(name = "size")
+    @Basic(optional = false)
     private long size;
 
     @Column(name = "type")

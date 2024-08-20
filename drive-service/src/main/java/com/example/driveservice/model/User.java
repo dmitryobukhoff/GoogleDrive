@@ -1,10 +1,13 @@
 package com.example.driveservice.model;
 
+import com.example.driveservice.model.metamodel.StorageObject_;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -23,6 +26,7 @@ public class User{
     @Column(name = "password")
     private String password;
 
-    //TODO: создать дерево префиксов для быстрого поиска файлов по относительному пути 'path'
+    @OneToMany(mappedBy = StorageObject_.USER_ID)
+    private Set<StorageObject> objects;
 
 }
